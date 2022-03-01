@@ -1,0 +1,66 @@
+#基于逐个尝试答案的一种问题求解策略
+
+/*1。假币问题
+有12枚硬币。其中有11枚真币和1枚假币。假币和真币重量不同，但不知道假币比真币轻还是重。现在，用一架天平称了这些币三次，告诉你称的结果，请你找出假币并且确定假币是轻是重（数据保证一定能找出来）。
+ 输入样例
+1
+ABCD EFGH even
+ABCI EFJK up
+ABIJ EFGH even
+ 输出样例
+K is the counterfeit coin and it is light.*/
+
+#include<stdio.h>
+#include<string.h>
+
+char Left[3][7];
+char Right[3][7];
+char result[3][7];
+bool IsFake(char c, bool light);    //light 为真表示假设假币为轻，否则表示假设假币为重
+
+int main() {
+	int t;
+	scanf("%d", &t);
+	while(t--) {
+		for(int i = 0; i < 3; ++i)
+			scanf("%s %s %s", &Left[i], &Right[i], &result[i]);
+		for(char c='A'; c <= 'L'; c++) {
+			if(IsFake(c, true)) {
+				printf("%c is the counterfeit coin and it is light.\n", c);
+				break;
+			} else if(IsFake(c, false)) {
+				printf("%c is the counterfeit coin and it is heavy.\n", c);
+				break;
+			}
+		}
+	}
+	return 0;
+}
+
+bool IsFake(char c, bool light) {
+	for(int i = 0; i < 3; i++) {
+		char * pLeft, *pRight;    //指向天平两边的字符串
+		if(light) {
+			pLeft = Left[i];
+			pRight = Right[i];
+		} else {                  //如果假设假币是重的，则把称量结果左右对换
+			pLeft = Right[i];
+			pRight = Left[i];
+		}
+		switch(result[i][0]){      //天平右边的情况
+			case 'u':
+				if(strchr(pRight, c) == NULL)
+					return false;
+				break;
+			case 'e':
+				if(strchr(pLeft, c) || strchr(pRight, c))
+					return false;
+				break;
+			case 'd':
+				if( strchr(pLeft, c) == NULL)
+					return false;
+				break;
+		}
+	}
+	return true;
+}
