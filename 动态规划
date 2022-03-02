@@ -1,0 +1,86 @@
+//1.最大三角形路径和    动态规划 == 记忆型递归（存放计算结果以避免重复计算） / 循环递推
+//记忆型递归
+#include <iostream>
+#include <algorithm>
+using namespace std;
+#define MAX 101
+int D[MAX][MAX];
+int n;
+int maxSum[MAX][MAX];
+
+int MaxSum(int i, int j) {
+	if( maxSum[i][j] != -1 )
+		return maxSum[i][j];
+	if(i==n)
+		maxSum[i][j] = D[i][j];
+	else {
+		int x = MaxSum(i+1,j);
+		int y = MaxSum(i+1,j+1);
+		maxSum[i][j] = max(x,y)+
+		               D[i][j];
+	}
+	return maxSum[i][j];
+}
+int main() {
+	int i,j;
+	cin >> n;
+	for(i=1; i<=n; i++)
+		for(j=1; j<=i; j++) {
+			cin >> D[i][j];
+			maxSum[i][j] = -1;
+		}
+	cout << MaxSum(1,1) << endl;
+}
+
+//最大三角形路径和-2
+//递推
+
+#include<stdio.h>
+#include<math.h>
+
+const int MAX = 101;
+int maxSum[MAX][MAX];	// 进一步可以用一维数组存储  //再进一步不用开辟额外空间，只用D数组最后一行存放 
+int D[MAX][MAX];
+int n;
+
+int main(){
+	int i,j;
+	scanf("%d", &n);
+	for(i=0; i < n; i++)
+		for(j=0; j <= i; j++) {
+			scanf("%d", &D[i][j]);
+			maxSum[i][j] = -1;
+		}
+	for(i = n-1; i >= 0; i--){
+		for(j = 0; j <= i; j++){
+			if(i == n-1)
+				maxSum[i][j] = D[i][j];
+			else{
+				maxSum[i][j] = fmax(maxSum[i+1][j], maxSum[i+1][j+1]) + D[i][j];
+			}
+		}
+	}
+	printf("%d", maxSum[0][0]);
+	return 0;
+} 
+
+//最终版：递推+空间优化
+#include <iostream>
+#include <algorithm>
+using namespace std;
+#define MAX 101
+int D[MAX][MAX];
+int n;
+int * maxSum;
+int main() {
+	int i,j;
+	cin >> n;
+	for(i=1; i<=n; i++)
+		for(j=1; j<=i; j++)
+			cin >> D[i][j];
+	maxSum = D[n]; //maxSum指向第n行  D[n]是地址！！！
+	for( int i = n-1; i>= 1; --i )
+		for( int j = 1; j <= i; ++j )
+			maxSum[j] = max(maxSum[j],maxSum[j+1]) + D[i][j];
+	cout << maxSum[1] << endl;
+}
