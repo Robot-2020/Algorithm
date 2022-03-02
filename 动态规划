@@ -1,4 +1,17 @@
-//1.最大三角形路径和    动态规划 == 记忆型递归（存放计算结果以避免重复计算） / 循环递推
+//动态规划  [记忆型递归]（存放计算结果以避免重复计算） /  [循环递推]
+/*
+特点：
+1) 问题具有最优子结构性质。
+2) 无后效性。
+
+步骤：
+1. 将原问题分解为子问题
+2. 确定状态
+3. 确定一些初始状态（边界状态）的值
+4. 确定状态转移方程
+*/
+
+//1.最大三角形路径和    
 //记忆型递归
 #include <iostream>
 #include <algorithm>
@@ -83,4 +96,60 @@ int main() {
 		for( int j = 1; j <= i; ++j )
 			maxSum[j] = max(maxSum[j],maxSum[j+1]) + D[i][j];
 	cout << maxSum[1] << endl;
+}
+
+
+//2.最长上升子序列
+#include<stdio.h>
+#include<math.h>
+const int MAXN = 1010;
+int a[MAXN], maxLen[MAXN];
+
+int main() {
+	int n;
+	scanf("%d", &n);
+	for(int i = 0; i < n; i++)
+		scanf("%d", &a[i]);
+	maxLen[0] = 1;
+	int res = 1;
+	for(int i =1; i < n; i++) {
+		for(int j = 0; j < i; j++) {
+			if(a[j] < a[i])
+				maxLen[i] = fmax(maxLen[i], maxLen[j] + 1);
+			res = fmax(maxLen[i], res);
+		}
+	}
+	printf("%d", res);
+	return 0;
+}
+
+
+//3.最长公共子序列
+#include<stdio.h>
+#include<math.h>
+#include<string.h>
+
+const int MAXN = 101;
+int dp[MAXN][MAXN];
+
+int main(){
+	char s1[MAXN], s2[MAXN];
+	scanf("%s %s", s1, s2);
+	int len1 = strlen(s1), len2 = strlen(s2);
+	int res = 1;
+	for(int i = 0; i <= len1; i++)
+		dp[i][0] = 0;
+	for(int j = 0; j <= len2; j++)
+		dp[0][j] = 0;
+	for(int i = 1; i <= len1; i++){
+		for(int j = 1; j <= len2; j++){
+			if(s1[i-1] == s2[j-1])
+				dp[i][j] = dp[i-1][j-1] + 1;
+			else
+				dp[i][j] = fmax(dp[i-1][j], dp[i][j-1]);
+			res = fmax(res, dp[i][j]);
+		}
+	}
+	printf("%d", res);
+	return 0;
 }
