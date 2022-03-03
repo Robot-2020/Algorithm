@@ -64,3 +64,6 @@ bool IsFake(char c, bool light) {
 	}
 	return true;
 }
+
+
+//2.熄灯问题***
