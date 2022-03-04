@@ -1,0 +1,145 @@
+//DFS伪代码
+const int MAX_LEN = 100;
+Node path[MAX_LEN];
+int depth;
+
+bool DFS(Node v){
+	if(v为终点){
+		path[depth] = v;
+		return true;
+	}
+	if(v为旧点)
+		return false;
+	//将v标记为旧点；
+	path[depth] = v;
+	++depth; 
+}
+int main(){
+	//将所有点都i标记为新点;
+	depth = 0;
+	if(DFS(起点)){
+		for(int i = 0; i <= depth; i++)
+			cout<<path[i]<<endl;
+	}
+	return 0;
+}
+
+
+//1.踩方格
+有一个方格矩阵，矩阵边界在无穷远处。我们做如下假设：
+a.每走一步时，只能从当前方格移动一格，走到某个相邻的方格上；
+b. 走过的格子立即塌陷无法再走第二次；
+c. 只能向北、东、西三个方向走；
+请问：如果允许在方格矩阵上走n步(n<=20)，共有多少种不同的方案。
+2种走法只要有一步不一样，即被认为是不同的方案
+
+递归
+从 (i,j) 出发，走n步的方案数，等于以下三项之和：
+从(i+1,j)出发，走n-1步的方案数。前提：(i+1,j)还没走过
+从(i,j+1)出发，走n-1步的方案数。前提：(i,j+1)还没走过
+从(i,j-1)出发，走n-1步的方案数。前提：(i,j-1)还没走过
+
+#include<iostream>
+#include<cstring> 
+using namespace std;
+
+int visited[30][50];
+
+
+int ways(int i, int j, int n);
+
+int main(){
+	int n;
+	cin>>n;
+	memset(visited, 0, sizeof(visited));
+	cout<<ways(0, 25, n)<<endl;
+	return 0;
+}
+
+int ways(int i, int j, int n){
+	if(n == 0)
+		return 1;
+	visited[i][j] = 1;
+	int num = 0;
+	if(!visited[i][j-1])
+		num+= ways(i, j-1, n-1);
+	if(!visited[i][j+1])
+		num+= ways(i, j+1, n-1);
+	if(!visited[i+1][j])
+		num+= ways(i+1, j, n-1);
+	visited[i][j] = 0;
+	return num;
+}
+
+//2.城堡问题
+输入
+ 程序从标准输入设备读入数据。
+ 第一行是两个整数，分别是南北向、东西向的方块数。
+ 在接下来的输入行里，每个方块用一个数字(0≤p≤50)描述。用一个数
+字表示方块周围的墙，1表示西墙，2表示北墙，4表示东墙，8表示南
+墙。每个方块用代表其周围墙的数字之和表示。城堡的内墙被计算两
+次，方块(1,1)的南墙同时也是方块(2,1)的北墙。
+ 输入的数据保证城堡至少有两个房间。
+
+输出
+ 城堡的房间数、城堡中最大房间所包括的方块数。
+ 结果显示在标准输出设备上
+样例输入
+4 
+7 
+11 6 11 6 3 10 6 
+7 9 6 13 5 15 5 
+1 10 12 7 13 7 5 
+13 11 10 8 10 12 13
+样例输出
+5
+9
+
+#include<iostream>
+#include<algorithm>
+#include<cstring>
+using namespace std;
+
+int R,C;	//行列数 
+int rooms[60][60];
+int color[60][60];		//方块是否染色过的标记 
+int maxRoomArea = 0, roomNum = 0;	//roomNum来标记同一次Dfs的房间类型号 
+int roomArea;
+void Dfs(int i, int k);
+
+int main(){
+	cin>>R>>C;
+	for(int i = 1; i <= R; i++)
+		for(int k = 1; k <= C; k++)
+			cin>>rooms[i][k];
+	memset(color, 0, sizeof(color));
+	for(int i = 1; i <= R; i++)
+		for(int k = 1; k <= C; k++){
+			if(!color[i][k]){
+				roomNum++;
+				roomArea = 0;
+				Dfs(i, k);
+				maxRoomArea = max(roomArea, maxRoomArea);
+			}
+		}
+	cout<<roomNum<<endl;
+	cout<<maxRoomArea<<endl;
+	return 0;
+}
+
+void Dfs(int i, int k){
+	if(color[i][k])
+		return;
+	++roomArea;
+	color[i][k] = roomNum;
+	if((rooms[i][k] & 1) == 0)	//向西走 
+		Dfs(i, k-1);
+	if((rooms[i][k] & 2) == 0)	//向北 
+		Dfs(i-1, k);
+	if((rooms[i][k] & 4) == 0)	//向东 
+		Dfs(i, k+1);
+	if((rooms[i][k] & 8) == 0)	//向南 
+		Dfs(i+1, k);	
+}
+
+
