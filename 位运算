@@ -24,3 +24,26 @@ int add(int a, int b){
     }
     return a;
 }
+
+//3.右移 >>
+i >> j
+i中所有的位向右移j位（/= 2^j）
+所有小于int的类型，移位以int的方式来做，结果是int
+对于unsigned的类型，左边填入0
+对于signed的类型，左边填入原来的最高位（保持符号不变）-->算术移位
+
+int GetBit(char c, int i){
+  return (c >> i) & i;
+}
+
+void SetBit(char *c, int i, int v){
+  if( v ){
+    c |= ( 1 << i );
+  }
+  else
+    c &= ~(1 << i );
+}
+
+void FlipBit(char & c, int i){
+  c ^= ( 1 << i );
+}
